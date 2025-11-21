@@ -13,12 +13,16 @@ const AnimatedStat: React.FC<StatProps> = ({ value, label, icon }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
-  // Detect when element is in viewport
+  // Detect viewport + reset when leaving
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.3 }
+      ([entry]) => {
+        setVisible(entry.isIntersecting);
+        if (!entry.isIntersecting) setCount(0); // reset count every time
+      },
+      { threshold: 0.2 }
     );
+
     if (ref.current) observer.observe(ref.current);
     return () => {
       if (ref.current) observer.unobserve(ref.current);
@@ -28,9 +32,11 @@ const AnimatedStat: React.FC<StatProps> = ({ value, label, icon }) => {
   // Count-up animation
   useEffect(() => {
     if (!visible) return;
+
     let start = 0;
-    const duration = 2000; // 2 seconds
-    const increment = value / (duration / 16); // ~60fps
+    const duration = 2000;
+    const increment = value / (duration / 16);
+
     const counter = setInterval(() => {
       start += increment;
       if (start >= value) {
@@ -39,6 +45,7 @@ const AnimatedStat: React.FC<StatProps> = ({ value, label, icon }) => {
       }
       setCount(Math.floor(start));
     }, 16);
+
     return () => clearInterval(counter);
   }, [visible, value]);
 
@@ -61,6 +68,17 @@ const About: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Restart animation on click event
+  useEffect(() => {
+    const restartAnimation = () => {
+      setIsVisible(false);
+      setTimeout(() => setIsVisible(true), 50);
+    };
+
+    window.addEventListener("restart-about", restartAnimation);
+    return () => window.removeEventListener("restart-about", restartAnimation);
+  }, []);
+
   // Parallax effect
   useEffect(() => {
     const handleScroll = () => {
@@ -71,13 +89,14 @@ const About: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Fade-in content
+  // Fade-in & reset when leaving viewport
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     );
     if (contentRef.current) observer.observe(contentRef.current);
+
     return () => {
       if (contentRef.current) observer.unobserve(contentRef.current);
     };
@@ -97,16 +116,13 @@ const About: React.FC = () => {
   ];
 
   return (
-    <section
-      id="about"
-      className="relative py-20 bg-gray-900 text-white overflow-hidden"
-    >
-      {/* Animated & Parallax Background */}
+    <section id="about" className="relative py-20 bg-gray-900 text-white overflow-hidden">
+      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center transform scale-100 animate-zoomBlur"
         style={{
-          backgroundImage: "url('https://i.pinimg.com/736x/f5/5d/60/f55d6063c29f7f3d4396deea6824b2b8.jpg",
-          transform: `translate(${offsetX}px, ${offsetY}px) scale(1)`,
+          backgroundImage: "url('https://i.pinimg.com/736x/f5/5d/60/f55d6063c29f7f3d4396deea6824b2b8.jpg')",
+          transform: `translate(${offsetX}px, ${offsetY}px) scale(1)`
         }}
       ></div>
 
@@ -121,7 +137,7 @@ const About: React.FC = () => {
         }`}
       >
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Profile Picture */}
+          {/* Profile */}
           <div className="md:col-span-1 flex justify-center md:justify-start">
             <img
               src="https://i.pinimg.com/736x/64/ca/d0/64cad05ccb98eed1c6b166badd5e0550.jpg"
@@ -130,14 +146,14 @@ const About: React.FC = () => {
             />
           </div>
 
-          {/* Text + Highlights */}
+          {/* Text */}
           <div className="md:col-span-1">
             <h2 className="text-4xl font-bold mb-6">About Me</h2>
             <p className="text-lg mb-4">
-              With 3 years of dedicated experience in land surveying, I specialize in delivering precise and reliable surveying services across residential, commercial, and infrastructure projects throughout Kenya.
+              With 3 years of dedicated experience in land surveying, I specialize in delivering precise and reliable surveying services across Kenya.
             </p>
             <p className="text-lg mb-6">
-              My expertise spans boundary surveys, topographic mapping, construction staking, and ALTA/NSPS surveys. I utilize state-of-the-art GPS equipment, total stations, and CAD software to ensure accuracy and efficiency in every project.
+              My expertise spans boundary surveys, topographic mapping, construction staking, and detailed CAD processing using GPS and Total Stations.
             </p>
 
             {/* Highlights */}
@@ -145,18 +161,13 @@ const About: React.FC = () => {
               {highlights.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex items-start opacity-0 transform translate-y-6 transition-all duration-700 animate-highlight`}
+                  className="flex items-start opacity-0 transform translate-y-6 transition-all duration-700"
                   style={{
                     transitionDelay: `${index * 200}ms`,
-                    ...(isVisible ? { opacity: 1, transform: "translateY(0)" } : {}),
+                    ...(isVisible ? { opacity: 1, transform: "translateY(0)" } : {})
                   }}
                 >
-                  <svg
-                    className="w-6 h-6 text-green-400 mr-3 mt-1 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-6 h-6 text-green-400 mr-3 mt-1" fill="none" stroke="currentColor">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -169,7 +180,7 @@ const About: React.FC = () => {
               ))}
             </div>
 
-            {/* Stats Boxes */}
+            {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
               {stats.map((stat, index) => (
                 <AnimatedStat key={index} {...stat} />
@@ -179,7 +190,7 @@ const About: React.FC = () => {
         </div>
       </div>
 
-      {/* Tailwind custom animations */}
+      {/* Animations */}
       <style>
         {`
           @keyframes zoomBlur {
@@ -193,14 +204,8 @@ const About: React.FC = () => {
             50% { transform: translateY(-15px); }
           }
 
-          @keyframes highlightPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-          }
-
           .animate-zoomBlur { animation: zoomBlur 20s ease-in-out infinite; }
           .animate-float { animation: float 6s ease-in-out infinite; }
-          .animate-highlight { animation: highlightPulse 4s ease-in-out infinite; }
         `}
       </style>
     </section>
