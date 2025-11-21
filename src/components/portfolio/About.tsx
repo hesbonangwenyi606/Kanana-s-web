@@ -61,12 +61,12 @@ const About: React.FC = () => {
       >
         <div className="grid md:grid-cols-2 gap-12 items-center">
           
-          {/* Profile Picture */}
+          {/* Profile Picture with continuous float animation */}
           <div className="md:col-span-1 flex justify-center md:justify-start">
             <img
-              src="https://i.pinimg.com/736x/64/ca/d0/64cad05ccb98eed1c6b166badd5e0550.jpg" // Replace with your profile picture URL
+              src="https://i.pinimg.com/736x/64/ca/d0/64cad05ccb98eed1c6b166badd5e0550.jpg"
               alt="Weddy Kanana"
-              className="w-700 h-700 md:w-480 md:h-900 rounded-full shadow-2xl object-cover border-4 border-white"
+              className="w-56 h-56 md:w-64 md:h-64 rounded-full shadow-2xl object-cover border-4 border-white animate-float"
             />
           </div>
 
@@ -88,7 +88,7 @@ const About: React.FC = () => {
               {highlights.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex items-start opacity-0 transform translate-y-6 transition-all duration-700`}
+                  className={`flex items-start opacity-0 transform translate-y-6 transition-all duration-700 animate-highlight`}
                   style={{
                     transitionDelay: `${index * 200}ms`,
                     ...(isVisible ? { opacity: 1, transform: 'translateY(0)' } : {}),
@@ -115,7 +115,7 @@ const About: React.FC = () => {
         </div>
       </div>
 
-      {/* Tailwind custom animation */}
+      {/* Tailwind custom animations */}
       <style>
         {`
           @keyframes zoomBlur {
@@ -123,8 +123,27 @@ const About: React.FC = () => {
             50% { transform: scale(1.05) translateZ(0); filter: blur(1.5px); }
             100% { transform: scale(1) translateZ(0); filter: blur(0px); }
           }
+
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+          }
+
+          @keyframes highlightPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+
           .animate-zoomBlur {
             animation: zoomBlur 20s ease-in-out infinite;
+          }
+
+          .animate-float {
+            animation: float 6s ease-in-out infinite;
+          }
+
+          .animate-highlight {
+            animation: highlightPulse 4s ease-in-out infinite;
           }
         `}
       </style>
