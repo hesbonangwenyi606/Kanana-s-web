@@ -1,22 +1,77 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
+import { FaBriefcase, FaUsers, FaClock } from "react-icons/fa";
 
+// Animated Stat component
+interface StatProps {
+  value: number;
+  label: string;
+  icon: JSX.Element;
+}
+
+const AnimatedStat: React.FC<StatProps> = ({ value, label, icon }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  // Detect when element is in viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => {
+      if (ref.current) observer.unobserve(ref.current);
+    };
+  }, []);
+
+  // Count-up animation
+  useEffect(() => {
+    if (!visible) return;
+    let start = 0;
+    const duration = 2000; // 2 seconds
+    const increment = value / (duration / 16); // ~60fps
+    const counter = setInterval(() => {
+      start += increment;
+      if (start >= value) {
+        start = value;
+        clearInterval(counter);
+      }
+      setCount(Math.floor(start));
+    }, 16);
+    return () => clearInterval(counter);
+  }, [visible, value]);
+
+  return (
+    <div
+      ref={ref}
+      className="bg-gray-800 p-6 rounded-xl text-center shadow-lg transform transition-transform duration-500 hover:scale-105"
+    >
+      {icon}
+      <p className="text-3xl font-bold text-green-400 mt-3">{count}+</p>
+      <p className="text-gray-300 mt-1">{label}</p>
+    </div>
+  );
+};
+
+// Main About component
 const About: React.FC = () => {
   const [offsetY, setOffsetY] = useState(0);
   const [offsetX, setOffsetX] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Parallax effect (vertical + horizontal)
+  // Parallax effect
   useEffect(() => {
     const handleScroll = () => {
       setOffsetY(window.scrollY * 0.3);
       setOffsetX(window.scrollY * 0.05);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Fade-in / slide-up content
+  // Fade-in content
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -36,9 +91,9 @@ const About: React.FC = () => {
   ];
 
   const stats = [
-    { label: "Years of Experience", value: "3+" },
-    { label: "Projects Completed", value: "50+" },
-    { label: "Clients Served", value: "25+" },
+    { label: "Years of Experience", value: 3, icon: <FaClock className="mx-auto text-green-400 w-8 h-8" /> },
+    { label: "Projects Completed", value: 50, icon: <FaBriefcase className="mx-auto text-green-400 w-8 h-8" /> },
+    { label: "Clients Served", value: 25, icon: <FaUsers className="mx-auto text-green-400 w-8 h-8" /> },
   ];
 
   return (
@@ -50,7 +105,7 @@ const About: React.FC = () => {
       <div
         className="absolute inset-0 bg-cover bg-center transform scale-100 animate-zoomBlur"
         style={{
-          backgroundImage: "url('https://example.com/new-image.jpg')",
+          backgroundImage: "url('https://i.pinimg.com/736x/a4/30/53/a4305381d8d64af2d5e3369f6fe0d29a.jpg",
           transform: `translate(${offsetX}px, ${offsetY}px) scale(1)`,
         }}
       ></div>
@@ -62,7 +117,7 @@ const About: React.FC = () => {
       <div
         ref={contentRef}
         className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ease-out ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
         }`}
       >
         <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -71,7 +126,7 @@ const About: React.FC = () => {
             <img
               src="https://i.pinimg.com/736x/64/ca/d0/64cad05ccb98eed1c6b166badd5e0550.jpg"
               alt="Weddy Kanana"
-              className="w-100 h-100 md:w-200 md:h-200 rounded-full shadow-2xl object-cover border-4 border-white animate-float"
+              className="w-56 h-56 md:w-64 md:h-64 rounded-full shadow-2xl object-cover border-4 border-white animate-float"
             />
           </div>
 
@@ -93,7 +148,7 @@ const About: React.FC = () => {
                   className={`flex items-start opacity-0 transform translate-y-6 transition-all duration-700 animate-highlight`}
                   style={{
                     transitionDelay: `${index * 200}ms`,
-                    ...(isVisible ? { opacity: 1, transform: 'translateY(0)' } : {}),
+                    ...(isVisible ? { opacity: 1, transform: "translateY(0)" } : {}),
                   }}
                 >
                   <svg
@@ -115,15 +170,9 @@ const About: React.FC = () => {
             </div>
 
             {/* Stats Boxes */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
               {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-800 p-6 rounded-xl text-center shadow-lg transform transition-transform duration-500 hover:scale-105"
-                >
-                  <p className="text-3xl font-bold text-green-400">{stat.value}</p>
-                  <p className="text-gray-300 mt-2">{stat.label}</p>
-                </div>
+                <AnimatedStat key={index} {...stat} />
               ))}
             </div>
           </div>
@@ -149,17 +198,9 @@ const About: React.FC = () => {
             50% { transform: scale(1.05); }
           }
 
-          .animate-zoomBlur {
-            animation: zoomBlur 20s ease-in-out infinite;
-          }
-
-          .animate-float {
-            animation: float 6s ease-in-out infinite;
-          }
-
-          .animate-highlight {
-            animation: highlightPulse 4s ease-in-out infinite;
-          }
+          .animate-zoomBlur { animation: zoomBlur 20s ease-in-out infinite; }
+          .animate-float { animation: float 6s ease-in-out infinite; }
+          .animate-highlight { animation: highlightPulse 4s ease-in-out infinite; }
         `}
       </style>
     </section>
