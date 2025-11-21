@@ -7,8 +7,8 @@ const About: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <img 
-              src="https://d64gsuwffb70l.cloudfront.net/691f328154ac71f65665617a_1763652288345_125d894a.webp"
-              alt="Weddy Kanana"
+              src="https://i.pinimg.com/736x/c8/e7/5b/c8e75bcde0fcb4b2db91d1b4f79f11ef.jpg"
+              alt="Wenddy Kanana"
               className="rounded-2xl shadow-2xl w-full"
             />
           </div>
