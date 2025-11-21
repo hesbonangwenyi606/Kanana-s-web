@@ -71,7 +71,7 @@ const About: React.FC = () => {
             <img
               src="https://i.pinimg.com/736x/64/ca/d0/64cad05ccb98eed1c6b166badd5e0550.jpg"
               alt="Weddy Kanana"
-              className="w-56 h-56 md:w-64 md:h-64 rounded-full shadow-2xl object-cover border-4 border-white animate-float"
+              className="w-100 h-100 md:w-200 md:h-200 rounded-full shadow-2xl object-cover border-4 border-white animate-float"
             />
           </div>
 
