@@ -9,8 +9,8 @@ const About: React.FC = () => {
   // Parallax effect (vertical + horizontal)
   useEffect(() => {
     const handleScroll = () => {
-      setOffsetY(window.scrollY * 0.3); // vertical parallax
-      setOffsetX(window.scrollY * 0.05); // horizontal parallax
+      setOffsetY(window.scrollY * 0.3);
+      setOffsetX(window.scrollY * 0.05);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -35,6 +35,12 @@ const About: React.FC = () => {
     "50+ Successfully Completed Projects",
   ];
 
+  const stats = [
+    { label: "Years of Experience", value: "3+" },
+    { label: "Projects Completed", value: "50+" },
+    { label: "Clients Served", value: "25+" },
+  ];
+
   return (
     <section
       id="about"
@@ -49,7 +55,7 @@ const About: React.FC = () => {
         }}
       ></div>
 
-      {/* Overlay for readability */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
       {/* Content */}
@@ -60,8 +66,7 @@ const About: React.FC = () => {
         }`}
       >
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          
-          {/* Profile Picture with continuous float animation */}
+          {/* Profile Picture */}
           <div className="md:col-span-1 flex justify-center md:justify-start">
             <img
               src="https://i.pinimg.com/736x/64/ca/d0/64cad05ccb98eed1c6b166badd5e0550.jpg"
@@ -74,17 +79,14 @@ const About: React.FC = () => {
           <div className="md:col-span-1">
             <h2 className="text-4xl font-bold mb-6">About Me</h2>
             <p className="text-lg mb-4">
-              With 3 years of dedicated experience in land surveying, I specialize in delivering 
-              precise and reliable surveying services across residential, commercial, and 
-              infrastructure projects throughout Kenya.
+              With 3 years of dedicated experience in land surveying, I specialize in delivering precise and reliable surveying services across residential, commercial, and infrastructure projects throughout Kenya.
             </p>
             <p className="text-lg mb-6">
-              My expertise spans boundary surveys, topographic mapping, construction staking, 
-              and ALTA/NSPS surveys. I utilize state-of-the-art GPS equipment, total stations, 
-              and CAD software to ensure accuracy and efficiency in every project.
+              My expertise spans boundary surveys, topographic mapping, construction staking, and ALTA/NSPS surveys. I utilize state-of-the-art GPS equipment, total stations, and CAD software to ensure accuracy and efficiency in every project.
             </p>
 
-            <div className="space-y-3">
+            {/* Highlights */}
+            <div className="space-y-3 mb-8">
               {highlights.map((item, index) => (
                 <div
                   key={index}
@@ -108,6 +110,19 @@ const About: React.FC = () => {
                     />
                   </svg>
                   <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Stats Boxes */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {stats.map((stat, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-800 p-6 rounded-xl text-center shadow-lg transform transition-transform duration-500 hover:scale-105"
+                >
+                  <p className="text-3xl font-bold text-green-400">{stat.value}</p>
+                  <p className="text-gray-300 mt-2">{stat.label}</p>
                 </div>
               ))}
             </div>
