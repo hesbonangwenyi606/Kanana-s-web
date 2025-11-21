@@ -105,7 +105,7 @@ const About: React.FC = () => {
       <div
         className="absolute inset-0 bg-cover bg-center transform scale-100 animate-zoomBlur"
         style={{
-          backgroundImage: "url('https://i.pinimg.com/736x/a4/30/53/a4305381d8d64af2d5e3369f6fe0d29a.jpg",
+          backgroundImage: "url('https://i.pinimg.com/736x/f5/5d/60/f55d6063c29f7f3d4396deea6824b2b8.jpg",
           transform: `translate(${offsetX}px, ${offsetY}px) scale(1)`,
         }}
       ></div>
